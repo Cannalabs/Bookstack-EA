@@ -138,7 +138,7 @@ class ImageService
      * Get the raw data content from an image.
      *
      * @throws Exception
-     * @returns ?resource
+     * @return ?resource
      */
     public function getImageStream(Image $image): mixed
     {
@@ -184,7 +184,7 @@ class ImageService
                 /** @var Image $image */
                 foreach ($images as $image) {
                     $searchQuery = '%' . basename($image->path) . '%';
-                    $inPage = DB::table('pages')
+                    $inPage = DB::table('entity_page_data')
                             ->where('html', 'like', $searchQuery)->count() > 0;
 
                     $inRevision = false;
@@ -260,6 +260,23 @@ class ImageService
         return $disk->usingSecureImages()
             // Check the image file exists
             && $disk->exists($imagePath)
+            // Check the file is likely an image file
+            && str_starts_with($disk->mimeType($imagePath), 'image/');
+    }
+
+    /**
+     * Check if the given path exists and is accessible depending on the current settings.
+     */
+    public function pathAccessible(string $imagePath): bool
+    {
+        $disk = $this->storage->getDisk('gallery');
+
+        if ($this->storage->usingSecureRestrictedImages() && !$this->checkUserHasAccessToRelationOfImageAtPath($imagePath)) {
+            return false;
+        }
+
+        // Check local_secure is active
+        return $disk->exists($imagePath)
             // Check the file is likely an image file
             && str_starts_with($disk->mimeType($imagePath), 'image/');
     }
