@@ -3,7 +3,7 @@
 BRANCH=${1:-development}
 
 # Build the container with a known name
-docker build --build-arg BRANCH="$BRANCH" -t bookstack:db-testing .
+docker build --no-cache --build-arg BRANCH="$BRANCH" -t bookstack:db-testing .
 if [ $? -eq 1 ]; then
   echo "Failed to build app container for testing"
   exit 1
@@ -11,11 +11,9 @@ fi
 
 # List of database containers to test against
 containers=(
-  "mysql:5.7"
   "mysql:8.0"
   "mysql:8.4"
   "mysql:9.5"
-  "mariadb:10.2"
   "mariadb:10.6"
   "mariadb:10.11"
   "mariadb:11.4"

@@ -25,11 +25,12 @@ class SearchController extends Controller
         $searchOpts = SearchOptions::fromRequest($request);
         $fullSearchString = $searchOpts->toString();
         $page = intval($request->get('page', '0')) ?: 1;
+        $count = setting()->getInteger('lists-page-count-search', 18, 1, 1000);
 
-        $results = $this->searchRunner->searchEntities($searchOpts, 'all', $page, 20);
+        $results = $this->searchRunner->searchEntities($searchOpts, 'all', $page, $count);
         $formatter->format($results['results']->all(), $searchOpts);
-        $paginator = new LengthAwarePaginator($results['results'], $results['total'], 20, $page);
-        $paginator->setPath('/search');
+        $paginator = new LengthAwarePaginator($results['results'], $results['total'], $count, $page);
+        $paginator->setPath(url('/search'));
         $paginator->appends($request->except('page'));
 
         $this->setPageTitle(trans('entities.search_for_term', ['term' => $fullSearchString]));

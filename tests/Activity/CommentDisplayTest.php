@@ -1,10 +1,8 @@
 <?php
 
-namespace Tests\Entity;
+namespace Tests\Activity;
 
-use BookStack\Activity\ActivityType;
 use BookStack\Activity\Models\Comment;
-use BookStack\Entities\Models\Page;
 use Tests\TestCase;
 
 class CommentDisplayTest extends TestCase
