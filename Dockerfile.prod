@@ -36,8 +36,9 @@ COPY . .
 # Install composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Set permissions
-RUN chown -R www-data:www-data storage bootstrap/cache public/uploads
+# Set permissions and entrypoint
+RUN chmod +x dev/docker/entrypoint.app.sh
+ENTRYPOINT ["/app/dev/docker/entrypoint.app.sh"]
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
